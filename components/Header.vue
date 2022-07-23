@@ -4,9 +4,11 @@
         <div class="container">
             <div class="flex justify-between">
                 <!-- logo area -->
-                <div>
-                    <img class="md:h-16 h-10 w-auto object-cover" src="~/assets/images/logo.png" alt="">
-                </div>
+                <div v-if="get_setting_val('general','logo')">
+                <nuxt-link to="/">
+                    <img class="md:h-16 h-10 w-auto object-cover" :src="($config.apiResource + get_setting_val('general','logo'))" alt="">
+                </nuxt-link>
+               </div>
 
                 <!-- Mobile toggle -->
               <div class="lg:hidden flex items-center">
@@ -21,9 +23,15 @@
                 </button>
               </div>
                 <!-- main menu area -->
-                <nav class="hidden lg:flex items-center">
+                <nav class="header-nav hidden lg:flex items-center">
                     <ul class="flex space-x-10">
-                        <li class="text-sm font-bold primary-font-color font-montserrat uppercase">
+                      <base-menu
+                      v-for="(menu, index) in menus"
+                      :menu="menu"
+                      :depth="0"
+                      :key="index"
+                      />
+                        <!-- <li class="text-sm font-bold primary-font-color font-montserrat uppercase">
                             <nuxt-link to="/">Home</nuxt-link>
                         </li>
                         <li class="text-sm font-bold primary-font-color font-montserrat uppercase">
@@ -43,7 +51,7 @@
                         </li>
                         <li class="text-sm font-bold primary-font-color font-montserrat uppercase">
                             <nuxt-link to="/media">Media</nuxt-link>
-                        </li>
+                        </li> -->
                     </ul>
                 </nav>
                 <!-- connect menu -->
@@ -69,8 +77,8 @@
                 </button>
               </div>
 
-              <nuxt-link to="/">
-                <img class="w-20" src="~/assets/images/logo.png" alt="">
+              <nuxt-link to="/" v-if="get_setting_val('general','logo')">
+                <img class="w-20" s:src="($config.apiResource + get_setting_val('general','logo'))" alt="">
               </nuxt-link>
 
               <ul class="divide-y font-sans">
@@ -131,7 +139,11 @@
 </template>
 
 <script>
+import {mapActions, mapGetters} from "vuex";
+import BaseMenu from "@/components/menu/BaseMenu";
+
 export default {
+  components:{BaseMenu},
   data(){
     return{
       isOpen: false,
@@ -166,14 +178,108 @@ export default {
       }
     }
   },
-  mounted() {
+  computed:{
+    ...mapGetters('menu',['menus']),
+    ...mapGetters('public/settings/generalSetting',['settings','get_setting_val']),
+  },
+  async mounted() {
     document.addEventListener("keydown", e => {
       if (e.keyCode == 27 && this.isOpen) this.isOpen = false;
     });
+
+    const payload = {apiUrl: `/get/menu/by/${1}`, stateName:'menus'}
+    if(!this.menus.length) await this.$store.dispatch('menu/getItems', payload)
+
+    this.$store.dispatch('public/settings/generalSetting/getSettings');
   }
 }
 </script>
 
 <style>
+
+nav.header-nav ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav.header-nav ul li {
+  padding: 0 8px;
+  position: relative;
+  transition: 0.5s;
+}
+
+nav.header-nav ul li a {
+  text-decoration: none;
+  font-size: 14px;
+}
+/* Navigation */
+.header-nav li span::before {
+  content: "";
+  position: absolute;
+  left: auto;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0;
+  background: currentColor;
+  transition: all 0.25s cubic-bezier(0.645, 0.045, 0.355, 1);
+}
+
+/* .header-nav li:hover span::before {
+  width: 100%;
+  background-color: #0071dc;
+  left: 0;
+  right: auto;
+} */
+
+.header-nav li span {
+  position: relative;
+  padding: 10px 0;
+}
+
+
+nav.header-nav ul li ul {
+  position: absolute;
+  left: 0;
+  margin-top: 37px;
+  width: 214px;
+  padding: 5px 20px;
+  background: rgba(0,0,0,0.5);
+  display: inline-block;
+  border-radius: 3px;
+  opacity: 0;
+  visibility: hidden;
+  z-index: 9;
+  transition: .5s;
+}
+nav.header-nav ul li ul li {
+  display: block;
+  position: relative;
+  transition: 0.5s;
+}
+nav.header-nav ul li ul li a {
+  display: block;
+  padding: 10px;
+  font-weight: 400;
+  transition: .5s;
+  padding-left: 0;
+  border-bottom: 1px solid #ddd;
+}
+nav.header-nav ul li ul li:last-child a {
+  border-bottom: none;
+}
+nav.header-nav ul li:hover ul {
+  opacity: 1;
+  visibility: visible;
+}
+.header-nav li:hover ul li span::before {
+  width: 0;
+  background-color: transparent;
+  left: 0;
+  right: auto;
+}
+
 
 </style>

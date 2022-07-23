@@ -103,7 +103,7 @@ header.scrolled button svg{
   color: #909090;
 }
 .parallax{
-  background-image: url('../images/parallax-1.png');
+  /* background-image: url('../images/parallax-1.png'); */
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: center center;
@@ -111,7 +111,6 @@ header.scrolled button svg{
   background-attachment: fixed !important;
 }
 .footer-bg{
-  background-image: url('../images/footer_banner.png');
   background-repeat: no-repeat;
   background-size: 100% 100%;
   background-position: center center;
@@ -471,7 +470,8 @@ header.scrolled button svg{
 	padding:0;
 	font-family:"arial",heletica,sans-serif;
 	font-size:12px;
-  background: #2980b9 url('../images/about-bg.png') repeat 0 0;
+  /* background: #2980b9 url('../images/about-bg.png') repeat 0 0; */
+  background-repeat: repeat;
 	-webkit-animation: 10s linear 0s normal none infinite animate;
 	-moz-animation: 10s linear 0s normal none infinite animate;
 	-ms-animation: 10s linear 0s normal none infinite animate;
